@@ -15,6 +15,7 @@ def load_image(name):
 
 SCREEN_WIDTH = 600
 VEL = 5
+enemy = pygame.sprite.Group()
 all_sprites = pygame.sprite.Group()
 horizontal_border = pygame.sprite.Group()
 vertical_border = pygame.sprite.Group()
@@ -25,6 +26,26 @@ ship_image = load_image("1.jpg")
 def terminate():
     pygame.quit()
     sys.exit()
+
+
+class Ball(pygame.sprite.Sprite):
+    def __init__(self, radius, x, y):
+        super(Ball, self).__init__(enemy)
+        self.radius = radius
+        self.image = pygame.Surface((2 * radius, 2 * radius),
+                                    pygame.SRCALPHA, 32)
+        pygame.draw.circle(self.image, pygame.Color((0, 204, 204)),
+                           (radius, radius), radius)
+        self.rect = pygame.Rect(x, y, 2 * radius, 2 * radius)
+        self.vx = random.randint(-2, 2)
+        self.vy = random.randint(1, 5)
+
+    def update(self):
+        self.rect = self.rect.move(self.vx, self.vy)
+        if pygame.sprite.spritecollideany(self, horizontal_border):
+            self.kill()
+        if pygame.sprite.spritecollideany(self, vertical_border):
+            self.kill()
 
 
 class Border(pygame.sprite.Sprite):
@@ -57,18 +78,24 @@ class Player(pygame.sprite.Sprite):
         keys = pygame.key.get_pressed()
         time_now = pygame.time.get_ticks()
         cooldown = 970
-        if keys[pygame.K_LEFT] and self.rect.x - VEL > 0:
+        if keys[pygame.K_LEFT] or keys[pygame.K_a]:
             self.rect.x -= VEL
-        if keys[pygame.K_RIGHT] and self.rect.x + VEL + self.rect.width < SCREEN_WIDTH:
+            if self.rect.x < 0:
+                self.rect.x = 600
+        if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
             self.rect.x += VEL
-        if keys[pygame.K_UP] and self.rect.y - VEL > 0:
+            if self.rect.x > 600:
+                self.rect.x = 0
+        if keys[pygame.K_UP] or keys[pygame.K_w]:
             self.rect.y -= VEL
-        if keys[pygame.K_DOWN] and self.rect.y + VEL + self.rect.height < SCREEN_HEIGHT:
+            if self.rect.y < 0:
+                self.rect.y = 600
+        if keys[pygame.K_DOWN] or keys[pygame.K_s]:
             self.rect.y += VEL
+            if self.rect.y > 600:
+                self.rect.y = 0
         if keys[pygame.K_SPACE] and time_now - self.last_shot > cooldown:
             self.last_shot = time_now
-        if keys[pygame.K_i]:
-            self.rect.y -= VEL
 
 
 if __name__ == '__main__':
@@ -90,11 +117,15 @@ if __name__ == '__main__':
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+        if len(enemy) < 20:
+            Ball(20, random.randrange(50, 550), 20)
         screen.fill((0, 0, 0))
         player.move()
         player.draw()
         all_sprites.draw(screen)
         all_sprites.update()
+        enemy.draw(screen)
+        enemy.update()
         pygame.display.flip()
         clock.tick(fps)
     pygame.quit()
