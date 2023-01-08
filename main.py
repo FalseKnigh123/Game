@@ -13,6 +13,7 @@ def load_image(name):
     return image
 
 
+player_group = pygame.sprite.Group()
 SCREEN_WIDTH = 600
 VEL = 5
 enemy = pygame.sprite.Group()
@@ -30,7 +31,8 @@ def terminate():
 
 class Ball(pygame.sprite.Sprite):
     def __init__(self, radius, x, y):
-        super(Ball, self).__init__(enemy)
+        super(Ball, self).__init__(all_sprites)
+        self.add(enemy)
         self.radius = radius
         self.image = pygame.Surface((2 * radius, 2 * radius),
                                     pygame.SRCALPHA, 32)
@@ -45,6 +47,8 @@ class Ball(pygame.sprite.Sprite):
         if pygame.sprite.spritecollideany(self, horizontal_border):
             self.kill()
         if pygame.sprite.spritecollideany(self, vertical_border):
+            self.kill()
+        if pygame.sprite.spritecollideany(self, horizontal_border):
             self.kill()
 
 
@@ -63,7 +67,8 @@ class Border(pygame.sprite.Sprite):
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, x, y):
-        super().__init__()
+        super(Player, self).__init__()
+        self.add(player_group)
         self.image = pygame.transform.scale(ship_image, (40, 40))
         self.width = -500
         self.height = -1050
@@ -96,6 +101,8 @@ class Player(pygame.sprite.Sprite):
                 self.rect.y = 0
         if keys[pygame.K_SPACE] and time_now - self.last_shot > cooldown:
             self.last_shot = time_now
+        if pygame.sprite.spritecollideany(self, enemy):
+            print(1)
 
 
 if __name__ == '__main__':
@@ -111,8 +118,6 @@ if __name__ == '__main__':
     Border(5, 5, 5, height - 5)
     Border(width - 5, 5, width - 5, height - 5)
     player = Player(20, 20)
-    player_group = pygame.sprite.Group()
-    player_group.add(player)
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -124,8 +129,6 @@ if __name__ == '__main__':
         player.draw()
         all_sprites.draw(screen)
         all_sprites.update()
-        enemy.draw(screen)
-        enemy.update()
         pygame.display.flip()
         clock.tick(fps)
     pygame.quit()
