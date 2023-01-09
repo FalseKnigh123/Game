@@ -81,9 +81,7 @@ class Player(pygame.sprite.Sprite):
         super(Player, self).__init__(all_sprites)
         self.add(player_group)
         self.image = pygame.transform.scale(ship_image, (40, 40))
-        self.width = -500
-        self.height = -1050
-        self.rect = pygame.Rect(0, 0, self.width, self.height)
+        self.rect = pygame.Rect(-20, -20, 40, 40)
         self.rect.center = (x, y)
         self.last_shot = pygame.time.get_ticks()
 
@@ -113,8 +111,8 @@ class Player(pygame.sprite.Sprite):
         if keys[pygame.K_SPACE] and time_now - self.last_shot > cooldown:
             Bulet(self.rect.left + 20, self.rect.top)
             self.last_shot = time_now
-        if pygame.sprite.spritecollide(self, enemy, True):
-            self.kill()
+        if pygame.sprite.spritecollide(self, enemy, False):
+            terminate()
 
 
 if __name__ == '__main__':
@@ -129,7 +127,7 @@ if __name__ == '__main__':
     Border(5, height - 5, width - 5, height - 5)
     Border(5, 5, 5, height - 5)
     Border(width - 5, 5, width - 5, height - 5)
-    player = Player(20, 20)
+    player = Player(300, 550)
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
