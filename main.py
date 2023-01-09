@@ -13,15 +13,15 @@ def load_image(name):
     return image
 
 
-player_group = pygame.sprite.Group()
-SCREEN_WIDTH = 600
 VEL = 5
+player_group = pygame.sprite.Group()
 enemy = pygame.sprite.Group()
 all_sprites = pygame.sprite.Group()
+bullet_group = pygame.sprite.Group()
 horizontal_border = pygame.sprite.Group()
 vertical_border = pygame.sprite.Group()
-SCREEN_HEIGHT = 800
 ship_image = load_image("1.jpg")
+
 
 
 def terminate():
@@ -29,15 +29,12 @@ def terminate():
     sys.exit()
 
 
-class Ball(pygame.sprite.Sprite):
+class Metior(pygame.sprite.Sprite):
     def __init__(self, radius, x, y):
-        super(Ball, self).__init__(all_sprites)
+        super(Metior, self).__init__(all_sprites)
         self.add(enemy)
         self.radius = radius
-        self.image = pygame.Surface((2 * radius, 2 * radius),
-                                    pygame.SRCALPHA, 32)
-        pygame.draw.circle(self.image, pygame.Color((0, 204, 204)),
-                           (radius, radius), radius)
+        self.image = pygame.transform.scale(ship_image, (50, 50))
         self.rect = pygame.Rect(x, y, 2 * radius, 2 * radius)
         self.vx = random.randint(-2, 2)
         self.vy = random.randint(1, 5)
@@ -48,7 +45,21 @@ class Ball(pygame.sprite.Sprite):
             self.kill()
         if pygame.sprite.spritecollideany(self, vertical_border):
             self.kill()
-        if pygame.sprite.spritecollideany(self, horizontal_border):
+
+
+class Bulet(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        super(Bulet, self).__init__(all_sprites)
+        self.add(bullet_group)
+        self.image = pygame.transform.scale(ship_image, (40, 40))
+        self.rect = self.image.get_rect()
+        self.rect.center = (x, y)
+
+    def update(self):
+        self.rect.y -= 7
+        if self.rect.top > 600:
+            self.kill()
+        if pygame.sprite.spritecollide(self, enemy, True):
             self.kill()
 
 
@@ -67,7 +78,7 @@ class Border(pygame.sprite.Sprite):
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, x, y):
-        super(Player, self).__init__()
+        super(Player, self).__init__(all_sprites)
         self.add(player_group)
         self.image = pygame.transform.scale(ship_image, (40, 40))
         self.width = -500
@@ -82,7 +93,7 @@ class Player(pygame.sprite.Sprite):
     def move(self):
         keys = pygame.key.get_pressed()
         time_now = pygame.time.get_ticks()
-        cooldown = 970
+        cooldown = 350
         if keys[pygame.K_LEFT] or keys[pygame.K_a]:
             self.rect.x -= VEL
             if self.rect.x < 0:
@@ -100,9 +111,10 @@ class Player(pygame.sprite.Sprite):
             if self.rect.y > 600:
                 self.rect.y = 0
         if keys[pygame.K_SPACE] and time_now - self.last_shot > cooldown:
+            Bulet(self.rect.left + 20, self.rect.top)
             self.last_shot = time_now
-        if pygame.sprite.spritecollideany(self, enemy):
-            print(1)
+        if pygame.sprite.spritecollide(self, enemy, True):
+            self.kill()
 
 
 if __name__ == '__main__':
@@ -123,7 +135,7 @@ if __name__ == '__main__':
             if event.type == pygame.QUIT:
                 running = False
         if len(enemy) < 20:
-            Ball(20, random.randrange(50, 550), 20)
+            Metior(20, random.randrange(0, 550), 20)
         screen.fill((0, 0, 0))
         player.move()
         player.draw()
