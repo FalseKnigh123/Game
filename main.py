@@ -20,8 +20,9 @@ all_sprites = pygame.sprite.Group()
 bullet_group = pygame.sprite.Group()
 horizontal_border = pygame.sprite.Group()
 vertical_border = pygame.sprite.Group()
-ship_image = load_image("1.jpg")
-
+ship_image = load_image("Ship.png")
+metior_image = load_image("metior.png")
+bul_im = load_image("bul.png")
 
 
 def terminate():
@@ -34,7 +35,7 @@ class Metior(pygame.sprite.Sprite):
         super(Metior, self).__init__(all_sprites)
         self.add(enemy)
         self.radius = radius
-        self.image = pygame.transform.scale(ship_image, (50, 50))
+        self.image = pygame.transform.scale(metior_image, (50, 50))
         self.rect = pygame.Rect(x, y, 2 * radius, 2 * radius)
         self.vx = random.randint(-2, 2)
         self.vy = random.randint(1, 5)
@@ -51,7 +52,7 @@ class Bulet(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super(Bulet, self).__init__(all_sprites)
         self.add(bullet_group)
-        self.image = pygame.transform.scale(ship_image, (40, 40))
+        self.image = pygame.transform.scale(bul_im, (20, 40))
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
 
@@ -81,7 +82,7 @@ class Player(pygame.sprite.Sprite):
         super(Player, self).__init__(all_sprites)
         self.add(player_group)
         self.image = pygame.transform.scale(ship_image, (40, 40))
-        self.rect = pygame.Rect(-20, -20, 40, 40)
+        self.rect = pygame.Rect(20, 20, 40, 40)
         self.rect.center = (x, y)
         self.last_shot = pygame.time.get_ticks()
 
