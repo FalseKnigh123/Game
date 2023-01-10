@@ -13,7 +13,7 @@ def load_image(name):
     return image
 
 
-VEL = 5
+VEL = 4
 player_group = pygame.sprite.Group()
 enemy = pygame.sprite.Group()
 all_sprites = pygame.sprite.Group()
