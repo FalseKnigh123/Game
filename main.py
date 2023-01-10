@@ -30,6 +30,33 @@ def terminate():
     sys.exit()
 
 
+def start_screen():
+    intro_text = ["Space defender", "", "", "",
+                  "Лучший результат:", "", "",
+                  "Назмите конпку 'spase' чтобы начать игры",]
+    global width, height
+    fon = pygame.transform.scale(load_image('start.jpg'), (width, height))
+    screen.blit(fon, (0, 0))
+    font = pygame.font.Font(None, 30)
+    text_coord = 100
+    for line in intro_text:
+        string_rendered = font.render(line, True, (255, 239, 213))
+        intro_rect = string_rendered.get_rect()
+        text_coord += 10
+        intro_rect.top = text_coord
+        intro_rect.x = 10
+        text_coord += intro_rect.height
+        screen.blit(string_rendered, intro_rect)
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                terminate()
+            elif event.type == pygame.KEYDOWN:
+                return
+        pygame.display.flip()
+        clock.tick(fps)
+
+
 class Metior(pygame.sprite.Sprite):
     def __init__(self, radius, x, y):
         super(Metior, self).__init__(all_sprites)
@@ -118,11 +145,12 @@ class Player(pygame.sprite.Sprite):
 
 if __name__ == '__main__':
     pygame.init()
-    pygame.display.set_caption('Шарики')
+    pygame.display.set_caption('Space defender')
     size = width, height = 600, 600
     screen = pygame.display.set_mode(size)
     fps = 50
     clock = pygame.time.Clock()
+    start_screen()
     running = True
     Border(5, 5, width - 5, 5)
     Border(5, height - 5, width - 5, height - 5)
