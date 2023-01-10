@@ -20,9 +20,10 @@ all_sprites = pygame.sprite.Group()
 bullet_group = pygame.sprite.Group()
 horizontal_border = pygame.sprite.Group()
 vertical_border = pygame.sprite.Group()
-ship_image = load_image("Ship.png")
+ship_image = load_image("Ship (1).png")
 metior_image = load_image("metior.png")
 bul_im = load_image("bul.png")
+GRAVITY = 0.1
 
 
 def terminate():
@@ -51,10 +52,38 @@ def start_screen():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 terminate()
-            elif event.type == pygame.KEYDOWN:
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                 return
         pygame.display.flip()
         clock.tick(fps)
+
+
+class Particle(pygame.sprite.Sprite):
+    fire = [load_image('metior.png')]
+    for scale in (5, 10, 15, 20):
+        fire.append(pygame.transform.scale(fire[0], (scale, scale)))
+
+    def __init__(self, pos, dx, dy):
+        super(Particle, self).__init__(all_sprites)
+        self.image = random.choice(self.fire[1:])
+        self.rect = self.image.get_rect()
+        self.velocity = [dx, dy]
+        self.rect.x, self.rect.y = pos
+        self.gravity = GRAVITY
+
+    def update(self):
+        self.velocity[1] += self.gravity
+        self.rect.x += self.velocity[0]
+        self.rect.y += self.velocity[1]
+        if not self.rect.colliderect(screen_rect):
+            self.kill()
+
+
+def create_particles(position):
+    particle_count = 5
+    numbers = range(-5, 5)
+    for _ in range(particle_count):
+        Particle(position, random.choice(numbers), random.choice(numbers))
 
 
 class Metior(pygame.sprite.Sprite):
@@ -89,6 +118,7 @@ class Bulet(pygame.sprite.Sprite):
             self.kill()
         if pygame.sprite.spritecollide(self, enemy, True):
             self.kill()
+            create_particles((self.rect.x, self.rect.y))
 
 
 class Border(pygame.sprite.Sprite):
@@ -150,6 +180,7 @@ if __name__ == '__main__':
     screen = pygame.display.set_mode(size)
     fps = 50
     clock = pygame.time.Clock()
+    screen_rect = (0, 0, width, height)
     start_screen()
     running = True
     Border(5, 5, width - 5, 5)
@@ -163,7 +194,8 @@ if __name__ == '__main__':
                 running = False
         if len(enemy) < 20:
             Metior(20, random.randrange(0, 550), 20)
-        screen.fill((0, 0, 0))
+        fon = pygame.transform.scale(load_image('Batl_fon2.png'), (width, height))
+        screen.blit(fon, (0, 0))
         player.move()
         player.draw()
         all_sprites.draw(screen)
