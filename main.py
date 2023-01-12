@@ -68,7 +68,8 @@ def final_screen():
     global width, height, running, scor
     intro_text = ["Defead", "", "", "",
                   f"Результат: {scor}", "", "",
-                  "Назмите любую кнопу чтобы вернуктся на стартовый экран",]
+                  "Нажмите любую кнопу чтобы вернуктся ",""
+                  "на стартовый экран",]
     fon = pygame.transform.scale(load_image('start.jpg'), (width, height))
     screen.blit(fon, (0, 0))
     font = pygame.font.Font(None, 30)
@@ -134,8 +135,8 @@ class Metior(pygame.sprite.Sprite):
         self.radius = radius
         self.image = pygame.transform.scale(metior_image, (50, 50))
         self.rect = pygame.Rect(x, y, 2 * radius, 2 * radius)
-        self.vx = random.randint(-2, 2)
-        self.vy = random.randint(1, 5)
+        self.vx = random.randint(-1, 1)
+        self.vy = 1 + scor / 500
 
     def update(self):
         self.rect = self.rect.move(self.vx, self.vy)
