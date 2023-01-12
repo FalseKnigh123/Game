@@ -14,8 +14,8 @@ def load_image(name):
 
 
 VEL = 5
-player_group = pygame.sprite.Group()
 enemy = pygame.sprite.Group()
+player_group = pygame.sprite.Group()
 all_sprites = pygame.sprite.Group()
 bullet_group = pygame.sprite.Group()
 horizontal_border = pygame.sprite.Group()
@@ -24,6 +24,9 @@ ship_image = load_image("Ship (1).png")
 metior_image = load_image("metior.png")
 bul_im = load_image("bul.png")
 GRAVITY = 0.1
+scor = 0
+with open("schor", "r") as f:
+    best_scor = int(f.read())
 
 
 def terminate():
@@ -32,8 +35,11 @@ def terminate():
 
 
 def start_screen():
+    global best_scor
+    with open("schor", "r") as f:
+        best_scor = int(f.read())
     intro_text = ["Space defender", "", "", "",
-                  "Лучший результат:", "", "",
+                  f" Лучший результат: {best_scor}", "", "",
                   "Назмите конпку 'spase' чтобы начать игры",]
     global width, height
     fon = pygame.transform.scale(load_image('start.jpg'), (width, height))
@@ -53,6 +59,41 @@ def start_screen():
             if event.type == pygame.QUIT:
                 terminate()
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                return
+        pygame.display.flip()
+        clock.tick(fps)
+
+
+def final_screen():
+    global width, height, running, scor
+    intro_text = ["Defead", "", "", "",
+                  f"Результат: {scor}", "", "",
+                  "Назмите любую кнопу чтобы вернуктся на стартовый экран",]
+    fon = pygame.transform.scale(load_image('start.jpg'), (width, height))
+    screen.blit(fon, (0, 0))
+    font = pygame.font.Font(None, 30)
+    text_coord = 100
+    for line in intro_text:
+        string_rendered = font.render(line, True, (255, 239, 213))
+        intro_rect = string_rendered.get_rect()
+        text_coord += 10
+        intro_rect.top = text_coord
+        intro_rect.x = 10
+        text_coord += intro_rect.height
+        screen.blit(string_rendered, intro_rect)
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                if best_scor < scor:
+                    with open("schor", "w") as f:
+                        f.write(str(scor))
+                terminate()
+            elif event.type == pygame.KEYDOWN:
+                running = False
+                if best_scor < scor:
+                    with open("schor", "w") as f:
+                        f.write(str(scor))
+                scor = 0
                 return
         pygame.display.flip()
         clock.tick(fps)
@@ -113,12 +154,14 @@ class Bulet(pygame.sprite.Sprite):
         self.rect.center = (x, y)
 
     def update(self):
+        global scor
         self.rect.y -= 7
         if self.rect.top > 600:
             self.kill()
         if pygame.sprite.spritecollide(self, enemy, True):
             self.kill()
             create_particles((self.rect.x, self.rect.y))
+            scor += 10
 
 
 class Border(pygame.sprite.Sprite):
@@ -147,6 +190,7 @@ class Player(pygame.sprite.Sprite):
         screen.blit(self.image, self.rect.topleft)
 
     def move(self):
+        global player_group, all_sprites, bullet_group, horizontal_border, vertical_border, enemy
         keys = pygame.key.get_pressed()
         time_now = pygame.time.get_ticks()
         cooldown = 350
@@ -170,36 +214,45 @@ class Player(pygame.sprite.Sprite):
             Bulet(self.rect.left + 20, self.rect.top)
             self.last_shot = time_now
         if pygame.sprite.spritecollide(self, enemy, False):
-            terminate()
+            final_screen()
+            self.kill()
+            player_group = pygame.sprite.Group()
+            all_sprites = pygame.sprite.Group()
+            bullet_group = pygame.sprite.Group()
+            horizontal_border = pygame.sprite.Group()
+            vertical_border = pygame.sprite.Group()
+            enemy = pygame.sprite.Group()
 
 
 if __name__ == '__main__':
     pygame.init()
-    pygame.display.set_caption('Space defender')
-    size = width, height = 600, 600
-    screen = pygame.display.set_mode(size)
-    fps = 50
-    clock = pygame.time.Clock()
-    screen_rect = (0, 0, width, height)
-    start_screen()
-    running = True
-    Border(5, 5, width - 5, 5)
-    Border(5, height - 5, width - 5, height - 5)
-    Border(5, 5, 5, height - 5)
-    Border(width - 5, 5, width - 5, height - 5)
-    player = Player(300, 550)
-    while running:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-        if len(enemy) < 20:
-            Metior(20, random.randrange(0, 550), 20)
-        fon = pygame.transform.scale(load_image('Batl_fon2.png'), (width, height))
-        screen.blit(fon, (0, 0))
-        player.move()
-        player.draw()
-        all_sprites.draw(screen)
-        all_sprites.update()
-        pygame.display.flip()
-        clock.tick(fps)
+    main_run = True
+    while main_run:
+        pygame.display.set_caption('Space defender')
+        size = width, height = 600, 600
+        screen = pygame.display.set_mode(size)
+        fps = 50
+        clock = pygame.time.Clock()
+        screen_rect = (0, 0, width, height)
+        start_screen()
+        running = True
+        Border(5, 5, width - 5, 5)
+        Border(5, height - 5, width - 5, height - 5)
+        Border(5, 5, 5, height - 5)
+        Border(width - 5, 5, width - 5, height - 5)
+        player = Player(300, 550)
+        while running:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    running = False
+            if len(enemy) < 20:
+                Metior(20, random.randrange(0, 550), 20)
+            fon = pygame.transform.scale(load_image('Batl_fon2.png'), (width, height))
+            screen.blit(fon, (0, 0))
+            player.move()
+            player.draw()
+            all_sprites.draw(screen)
+            all_sprites.update()
+            pygame.display.flip()
+            clock.tick(fps)
     pygame.quit()
