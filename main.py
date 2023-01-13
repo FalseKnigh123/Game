@@ -64,6 +64,35 @@ def start_screen():
         clock.tick(fps)
 
 
+def dificult_screen():
+    global best_scor
+    intro_text = ["Выберете сложность", "1. Мало метеоритов", "2. Метеоритов больше", "3. Метеоритов еще больше "
+                                                                                     "колличестов хп увеличивается "
+                                                                                     "с размером",
+                  "4. Метеоритов огромной колличесто даже у самых мальньких метеоритов 2 хп"]
+    global width, height
+    fon = pygame.transform.scale(load_image('start.jpg'), (width, height))
+    screen.blit(fon, (0, 0))
+    font = pygame.font.Font(None, 30)
+    text_coord = 100
+    for line in intro_text:
+        string_rendered = font.render(line, True, (255, 239, 213))
+        intro_rect = string_rendered.get_rect()
+        text_coord += 10
+        intro_rect.top = text_coord
+        intro_rect.x = 10
+        text_coord += intro_rect.height
+        screen.blit(string_rendered, intro_rect)
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                terminate()
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                return
+        pygame.display.flip()
+        clock.tick(fps)
+
+
 def final_screen():
     global width, height, running, scor
     intro_text = ["Defead", "", "", "",
