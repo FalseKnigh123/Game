@@ -106,13 +106,12 @@ class Metior(pygame.sprite.Sprite):
     def __init__(self, radius, x, y):
         super(Metior, self).__init__(all_sprites)
         self.add(enemy)
-        #self.radius = radius
+        radius = random.randrange(50, 90, 20)
+        self.radius = radius
         self.metior_image_1 = random.choice(met_images)
         metior_image = self.metior_image_1.copy()
-        self.image = pygame.transform.scale(metior_image, (50, 50))
-        self.rect = metior_image.get_rect()
-        self.radius = int(self.rect.width * .90 / 2)
-        self.rect = pygame.Rect(x, y, 2 * radius, 2 * radius)
+        self.image = pygame.transform.scale(metior_image, (radius, radius))
+        self.rect = pygame.Rect(x, y, radius, radius)
         self.vx = random.randint(-2, 2)
         self.vy = random.randint(1, 5)
 
