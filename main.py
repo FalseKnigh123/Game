@@ -2,6 +2,7 @@ import os
 import sys
 import pygame
 import random
+#from os import path
 
 
 def load_image(name):
@@ -20,10 +21,25 @@ all_sprites = pygame.sprite.Group()
 bullet_group = pygame.sprite.Group()
 horizontal_border = pygame.sprite.Group()
 vertical_border = pygame.sprite.Group()
+direct = os.path.join(os.path.dirname(__file__), "assets")
 ship_image = load_image("Ship (1).png")
 metior_image = load_image("metior.png")
+metior_23_image = load_image("mid_met-tran.png")
+metior_34_image = load_image("new_met-tran.png")
 bul_im = load_image("bul.png")
 GRAVITY = 0.1
+
+met_images = []
+met_images.append(metior_23_image)
+met_images.append(metior_image)
+met_images.append(metior_34_image)
+
+'''met_list = [
+    "metior.png",
+    "mid_met.png"
+]
+for im in met_list:
+    met_images.append(pygame.image.load(path.join(direct, im)).convert())'''
 
 
 def terminate():
@@ -91,6 +107,10 @@ class Metior(pygame.sprite.Sprite):
         super(Metior, self).__init__(all_sprites)
         self.add(enemy)
         self.radius = radius
+        #self.rect = self.metior_image.get_rect()
+        #self.radius = int(self.rect.width * .90 / 2)
+        self.metior_image_1 = random.choice(met_images)
+        metior_image = self.metior_image_1.copy()
         self.image = pygame.transform.scale(metior_image, (50, 50))
         self.rect = pygame.Rect(x, y, 2 * radius, 2 * radius)
         self.vx = random.randint(-2, 2)
