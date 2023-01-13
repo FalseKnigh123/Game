@@ -37,7 +37,7 @@ def terminate():
 
 
 def start_screen():
-    global best_scor
+    global best_scor, player_group, bullet_group, horizontal_border, all_sprites, vertical_border, enemy
     with open("schor", "r") as f:
         best_scor = int(f.read())
     intro_text = ["Space defender", "", "", "",
@@ -48,6 +48,12 @@ def start_screen():
     screen.blit(fon, (0, 0))
     font = pygame.font.Font(None, 30)
     text_coord = 100
+    player_group = pygame.sprite.Group()
+    all_sprites = pygame.sprite.Group()
+    bullet_group = pygame.sprite.Group()
+    horizontal_border = pygame.sprite.Group()
+    vertical_border = pygame.sprite.Group()
+    enemy = pygame.sprite.Group()
     for line in intro_text:
         string_rendered = font.render(line, True, (255, 239, 213))
         intro_rect = string_rendered.get_rect()
@@ -295,7 +301,15 @@ if __name__ == '__main__':
                     running = False
             if len(enemy) < lvl:
                 Metior(20, random.randrange(0, 550), 20)
-            fon = pygame.transform.scale(load_image('Batl_fon2.png'), (width, height))
+            if fon_flag == 1:
+                fon = pygame.transform.scale(load_image('Batl_fon.png'), (width, height))
+            if fon_flag == 2:
+                fon = pygame.transform.scale(load_image('batl_fon2.png'), (width, height))
+            if fon_flag == 3:
+                fon = pygame.transform.scale(load_image('batl_fon3.png'), (width, height))
+            if fon_flag == 4:
+                fon = pygame.transform.scale(load_image('batl_fon4.png'), (width, height))
+            screen.blit(fon, (0, 0))
             player.move()
             player.draw()
             all_sprites.draw(screen)
