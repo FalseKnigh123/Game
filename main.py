@@ -15,6 +15,7 @@ def load_image(name):
 
 VEL = 5
 lvl = 0
+fon_flag = 0
 enemy = pygame.sprite.Group()
 player_group = pygame.sprite.Group()
 all_sprites = pygame.sprite.Group()
@@ -70,7 +71,7 @@ def dificult_screen():
                     "1.Легко Мало метеоритов","2. Средняя сложность Метеоритов больше",
                   "3.Сложно  Метеоритов еще больше колличестов","хп увеличивается с размером",
                   "4.impossible Метеоритов огромной колличесто,","даже у самых мальньких метеоритов 2 хп"]
-    global width, height, lvl
+    global width, height, lvl, fon_flag
     fon = pygame.transform.scale(load_image('start.jpg'), (width, height))
     screen.blit(fon, (0, 0))
     font = pygame.font.Font(None, 30)
@@ -89,16 +90,20 @@ def dificult_screen():
                 terminate()
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_1:
                 lvl = 10
+                fon_flag = 1
                 return
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_2:
                 lvl = 20
+                fon_flag = 2
                 return
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_3:
                 lvl = 30
+                fon_flag = 3
                 # To Do хр
                 return
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_4:
                 lvl = 40
+                fon_flag = 4
                 # To Do хр
                 return
         pygame.display.flip()
