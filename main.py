@@ -14,6 +14,7 @@ def load_image(name):
 
 
 VEL = 5
+lvl = 0
 enemy = pygame.sprite.Group()
 player_group = pygame.sprite.Group()
 all_sprites = pygame.sprite.Group()
@@ -65,12 +66,11 @@ def start_screen():
 
 
 def dificult_screen():
-    global best_scor
-    intro_text = ["Выберете сложность", "1. Мало метеоритов", "2. Метеоритов больше", "3. Метеоритов еще больше "
-                                                                                     "колличестов хп увеличивается "
-                                                                                     "с размером",
-                  "4. Метеоритов огромной колличесто даже у самых мальньких метеоритов 2 хп"]
-    global width, height
+    intro_text = ["Выберете сложность", "Нажмите на клавиатуре цифру обозночающую сложность",
+                    "1.Легко Мало метеоритов","2. Средняя сложность Метеоритов больше",
+                  "3.Сложно  Метеоритов еще больше колличестов","хп увеличивается с размером",
+                  "4.impossible Метеоритов огромной колличесто,","даже у самых мальньких метеоритов 2 хп"]
+    global width, height, lvl
     fon = pygame.transform.scale(load_image('start.jpg'), (width, height))
     screen.blit(fon, (0, 0))
     font = pygame.font.Font(None, 30)
@@ -87,7 +87,19 @@ def dificult_screen():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 terminate()
-            elif event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_1:
+                lvl = 10
+                return
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_2:
+                lvl = 20
+                return
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_3:
+                lvl = 30
+                # To Do хр
+                return
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_4:
+                lvl = 40
+                # To Do хр
                 return
         pygame.display.flip()
         clock.tick(fps)
@@ -191,7 +203,7 @@ class Bulet(pygame.sprite.Sprite):
         if pygame.sprite.spritecollide(self, enemy, True):
             self.kill()
             create_particles((self.rect.x, self.rect.y))
-            scor += 10
+            scor += lvl / 5
 
 
 class Border(pygame.sprite.Sprite):
@@ -265,6 +277,7 @@ if __name__ == '__main__':
         clock = pygame.time.Clock()
         screen_rect = (0, 0, width, height)
         start_screen()
+        dificult_screen()
         running = True
         Border(5, 5, width - 5, 5)
         Border(5, height - 5, width - 5, height - 5)
@@ -275,10 +288,9 @@ if __name__ == '__main__':
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
-            if len(enemy) < 20:
+            if len(enemy) < lvl:
                 Metior(20, random.randrange(0, 550), 20)
             fon = pygame.transform.scale(load_image('Batl_fon2.png'), (width, height))
-            screen.blit(fon, (0, 0))
             player.move()
             player.draw()
             all_sprites.draw(screen)
