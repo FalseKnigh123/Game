@@ -25,14 +25,12 @@ direct = os.path.join(os.path.dirname(__file__), "assets")
 ship_image = load_image("Ship (1).png")
 metior_image = load_image("metior.png")
 metior_23_image = load_image("mid_met-tran.png")
-metior_34_image = load_image("new_met-tran.png")
 bul_im = load_image("bul.png")
 GRAVITY = 0.1
 
 met_images = []
 met_images.append(metior_23_image)
 met_images.append(metior_image)
-met_images.append(metior_34_image)
 
 '''met_list = [
     "metior.png",
@@ -109,8 +107,7 @@ class Metior(pygame.sprite.Sprite):
         radius = random.randrange(50, 90, 20)
         self.radius = radius
         self.metior_image_1 = random.choice(met_images)
-        metior_image = self.metior_image_1.copy()
-        self.image = pygame.transform.scale(metior_image, (radius, radius))
+        self.image = pygame.transform.scale(self.metior_image_1, (radius, radius))
         self.rect = pygame.Rect(x, y, radius, radius)
         self.vx = random.randint(-2, 2)
         self.vy = random.randint(1, 5)
