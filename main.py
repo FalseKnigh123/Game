@@ -120,9 +120,9 @@ def final_screen():
     global width, height, running, scor
     intro_text = ["Defead", "", "", "",
                   f"Результат: {scor}", "", "",
-                  "Нажмите любую кнопу чтобы вернуктся ",""
+                  "Нажмите на кнопу enter чтобы вернуктся ",""
                   "на стартовый экран",]
-    fon = pygame.transform.scale(load_image('start.jpg'), (width, height))
+    fon = pygame.transform.scale(load_image('final_fon.png'), (width, height))
     screen.blit(fon, (0, 0))
     font = pygame.font.Font(None, 30)
     text_coord = 100
@@ -141,7 +141,7 @@ def final_screen():
                     with open("schor", "w") as f:
                         f.write(str(scor))
                 terminate()
-            elif event.type == pygame.KEYDOWN:
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                 running = False
                 if best_scor < scor:
                     with open("schor", "w") as f:
