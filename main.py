@@ -24,11 +24,23 @@ horizontal_border = pygame.sprite.Group()
 vertical_border = pygame.sprite.Group()
 ship_image = load_image("Ship (1).png")
 metior_image = load_image("metior.png")
+metior_23_image = load_image("mid_met-tran.png")
 bul_im = load_image("bul.png")
 GRAVITY = 0.1
 scor = 0
 with open("schor", "r") as f:
     best_scor = int(f.read())
+
+met_images = []
+met_images.append(metior_23_image)
+met_images.append(metior_image)
+
+'''met_list = [
+    "metior.png",
+    "mid_met.png"
+]
+for im in met_list:
+    met_images.append(pygame.image.load(path.join(direct, im)).convert())'''
 
 
 def terminate():
@@ -189,6 +201,11 @@ class Metior(pygame.sprite.Sprite):
         self.rect = pygame.Rect(x, y, 2 * radius, 2 * radius)
         self.vx = random.randint(-1, 1)
         self.vy = 1 + scor / 500
+        self.metior_image_1 = random.choice(met_images)
+        self.image = pygame.transform.scale(self.metior_image_1, (radius, radius))
+        self.rect = pygame.Rect(x, y, radius, radius)
+        self.vx = random.randint(-2, 2)
+        self.vy = random.randint(1, 5)
 
     def update(self):
         self.rect = self.rect.move(self.vx, self.vy)
