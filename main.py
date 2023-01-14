@@ -2,7 +2,7 @@ import os
 import sys
 import pygame
 import random
-#from os import path
+
 
 
 def load_image(name):
@@ -13,7 +13,7 @@ def load_image(name):
     image = pygame.image.load(fullname)
     return image
 
-
+pygame.mixer.init()
 VEL = 5
 player_group = pygame.sprite.Group()
 enemy = pygame.sprite.Group()
@@ -21,11 +21,14 @@ all_sprites = pygame.sprite.Group()
 bullet_group = pygame.sprite.Group()
 horizontal_border = pygame.sprite.Group()
 vertical_border = pygame.sprite.Group()
-direct = os.path.join(os.path.dirname(__file__), "assets")
+#direct = os.path.join(os.path.dirname(__file__), "assets")
 ship_image = load_image("Ship (1).png")
 metior_image = load_image("metior.png")
 metior_23_image = load_image("mid_met-tran.png")
 metior_34_image = load_image("new_met-tran.png")
+shooting_sound = pygame.mixer.Sound("shoot.wav")
+explo_sound = pygame.mixer.Sound("invaderkilled.wav")
+#game_over_sound = pygame.mixer.Sound("explosion.wav")
 bul_im = load_image("bul.png")
 GRAVITY = 0.1
 
@@ -34,13 +37,6 @@ met_images.append(metior_23_image)
 met_images.append(metior_image)
 met_images.append(metior_34_image)
 
-'''met_list = [
-    "metior.png",
-    "mid_met.png"
-]
-for im in met_list:
-    met_images.append(pygame.image.load(path.join(direct, im)).convert())'''
-
 
 def terminate():
     pygame.quit()
@@ -48,6 +44,8 @@ def terminate():
 
 
 def start_screen():
+    #menu_sound = pygame.mixer.music.load("что-нибудь скачать")
+    #pygame.mixer.music.play(-1)
     intro_text = ["Space defender", "", "", "",
                   "Лучший результат:", "", "",
                   "Назмите конпку 'spase' чтобы начать игры",]
@@ -130,12 +128,14 @@ class Bulet(pygame.sprite.Sprite):
         self.image = pygame.transform.scale(bul_im, (20, 40))
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
+        shooting_sound.play()
 
     def update(self):
         self.rect.y -= 7
         if self.rect.top > 600:
             self.kill()
         if pygame.sprite.spritecollide(self, enemy, True):
+            explo_sound.play()
             self.kill()
             create_particles((self.rect.x, self.rect.y))
 
