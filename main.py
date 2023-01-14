@@ -14,7 +14,11 @@ def load_image(name):
     return image
 
 pygame.mixer.init()
+pygame.font.init()
+SCORE=0
 VEL = 5
+size = width, height = 600, 600
+screen = pygame.display.set_mode(size)
 player_group = pygame.sprite.Group()
 enemy = pygame.sprite.Group()
 all_sprites = pygame.sprite.Group()
@@ -29,6 +33,7 @@ metior_34_image = load_image("new_met-tran.png")
 shooting_sound = pygame.mixer.Sound("shoot.wav")
 explo_sound = pygame.mixer.Sound("invaderkilled.wav")
 #game_over_sound = pygame.mixer.Sound("explosion.wav")
+FONT1 = pygame.font.Font("Quick Brown.ttf", 18)
 bul_im = load_image("bul.png")
 GRAVITY = 0.1
 
@@ -48,11 +53,11 @@ def start_screen():
     #pygame.mixer.music.play(-1)
     intro_text = ["Space defender", "", "", "",
                   "Лучший результат:", "", "",
-                  "Назмите конпку 'spase' чтобы начать игры",]
+                  "Нажмите конпку 'spase' чтобы начать игру",]
     global width, height
     fon = pygame.transform.scale(load_image('start.jpg'), (width, height))
     screen.blit(fon, (0, 0))
-    font = pygame.font.Font(None, 30)
+    font = pygame.font.Font("Quick Brown.ttf", 15)
     text_coord = 100
     for line in intro_text:
         string_rendered = font.render(line, True, (255, 239, 213))
@@ -122,6 +127,7 @@ class Metior(pygame.sprite.Sprite):
 
 
 class Bulet(pygame.sprite.Sprite):
+    global SCORE
     def __init__(self, x, y):
         super(Bulet, self).__init__(all_sprites)
         self.add(bullet_group)
@@ -192,6 +198,21 @@ class Player(pygame.sprite.Sprite):
             terminate()
 
 
+def draw_text(text, x, y):
+    draw_text = FONT1.render(text, 1, (255, 255, 255))
+    screen.blit(draw_text, (x, y))
+
+
+def get_HighScore():
+    with open("highscore.txt", "r") as f:
+        return f.read()
+
+try:
+    highscore = int(get_HighScore())
+except:
+    highscore = 0
+
+
 if __name__ == '__main__':
     pygame.init()
     pygame.display.set_caption('Space defender')
@@ -221,4 +242,11 @@ if __name__ == '__main__':
         all_sprites.update()
         pygame.display.flip()
         clock.tick(fps)
+        draw_text(f"Score: {SCORE}", 500, 650)
+        if (highscore < SCORE):
+            highscore = SCORE
+        with open("highscore.txt", "w") as f:
+            f.write(str(highscore))
+        draw_text(f"HighestScore: {highscore}", 30, 630)
+        pygame.display.update()
     pygame.quit()
