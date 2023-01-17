@@ -12,7 +12,8 @@ def load_image(name):
     image = pygame.image.load(fullname)
     return image
 
-
+pygame.mixer.init()
+pygame.font.init()
 VEL = 5
 lvl = 0
 fon_flag = 0
@@ -25,6 +26,10 @@ vertical_border = pygame.sprite.Group()
 ship_image = load_image("Ship (1).png")
 metior_image = load_image("metior.png")
 metior_23_image = load_image("mid_met-tran.png")
+shooting_sound = pygame.mixer.Sound("shoot.wav")
+explo_sound = pygame.mixer.Sound("invaderkilled.wav")
+#game_over_sound = pygame.mixer.Sound("explosion.wav")
+FONT1 = pygame.font.Font("Quick Brown.ttf", 18)
 bul_im = load_image("bul.png")
 GRAVITY = 0.1
 scor = 0
@@ -49,6 +54,8 @@ def terminate():
 
 
 def start_screen():
+    #menu_sound = pygame.mixer.music.load("что-нибудь скачать")
+    #pygame.mixer.music.play(-1)
     global best_scor, player_group, bullet_group, horizontal_border, all_sprites, vertical_border, enemy
     with open("schor", "r") as f:
         best_scor = int(f.read())
@@ -222,6 +229,7 @@ class Bulet(pygame.sprite.Sprite):
         self.image = pygame.transform.scale(bul_im, (20, 40))
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
+        shooting_sound.play()
 
     def update(self):
         global scor
@@ -230,6 +238,7 @@ class Bulet(pygame.sprite.Sprite):
             self.kill()
         if pygame.sprite.spritecollide(self, enemy, True):
             self.kill()
+            explo_sound.play()
             create_particles((self.rect.x, self.rect.y))
             scor += lvl / 5
 
