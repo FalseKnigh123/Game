@@ -22,9 +22,14 @@ all_sprites = pygame.sprite.Group()
 bullet_group = pygame.sprite.Group()
 horizontal_border = pygame.sprite.Group()
 vertical_border = pygame.sprite.Group()
+#direct = os.path.join(os.path.dirname(__file__), "assets")
 ship_image = load_image("Ship (1).png")
 metior_image = load_image("metior.png")
 metior_23_image = load_image("mid_met-tran.png")
+shooting_sound = pygame.mixer.Sound("shoot.wav")
+explo_sound = pygame.mixer.Sound("invaderkilled.wav")
+#game_over_sound = pygame.mixer.Sound("explosion.wav")
+FONT1 = pygame.font.Font("Quick Brown.ttf", 18)
 bul_im = load_image("bul.png")
 GRAVITY = 0.1
 scor = 0
@@ -34,13 +39,7 @@ with open("schor", "r") as f:
 met_images = []
 met_images.append(metior_23_image)
 met_images.append(metior_image)
-
-'''met_list = [
-    "metior.png",
-    "mid_met.png"
-]
-for im in met_list:
-    met_images.append(pygame.image.load(path.join(direct, im)).convert())'''
+met_images.append(metior_34_image)
 
 
 def terminate():
@@ -52,6 +51,8 @@ def start_screen():
     global best_scor, player_group, bullet_group, horizontal_border, all_sprites, vertical_border, enemy
     with open("schor", "r") as f:
         best_scor = int(f.read())
+    #menu_sound = pygame.mixer.music.load("что-нибудь скачать")
+    #pygame.mixer.music.play(-1)
     intro_text = ["Space defender", "", "", "",
                   f" Лучший результат: {best_scor}", "", "",
                   "Назмите конпку 'spase' чтобы начать игры",]
@@ -136,7 +137,7 @@ def final_screen():
                   "на стартовый экран"]
     fon = pygame.transform.scale(load_image('final_fon.png'), (width, height))
     screen.blit(fon, (0, 0))
-    font = pygame.font.Font(None, 30)
+    font = pygame.font.Font("Quick Brown.ttf", 15)
     text_coord = 100
     for line in intro_text:
         string_rendered = font.render(line, True, (255, 239, 213))
@@ -149,16 +150,8 @@ def final_screen():
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                if best_scor < scor:
-                    with open("schor", "w") as f:
-                        f.write(str(scor))
                 terminate()
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
-                running = False
-                if best_scor < scor:
-                    with open("schor", "w") as f:
-                        f.write(str(scor))
-                scor = 0
                 return
         pygame.display.flip()
         clock.tick(fps)
@@ -222,6 +215,7 @@ class Bulet(pygame.sprite.Sprite):
         self.image = pygame.transform.scale(bul_im, (20, 40))
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
+        shooting_sound.play()
 
     def update(self):
         global scor
@@ -229,6 +223,7 @@ class Bulet(pygame.sprite.Sprite):
         if self.rect.top > 600:
             self.kill()
         if pygame.sprite.spritecollide(self, enemy, True):
+            explo_sound.play()
             self.kill()
             create_particles((self.rect.x, self.rect.y))
             scor += lvl / 5
