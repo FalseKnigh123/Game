@@ -12,6 +12,8 @@ def load_image(name):
     image = pygame.image.load(fullname)
     return image
 
+
+buff_flag = False
 pygame.mixer.init()
 pygame.font.init()
 VEL = 5
@@ -20,6 +22,7 @@ fon_flag = 0
 enemy = pygame.sprite.Group()
 player_group = pygame.sprite.Group()
 all_sprites = pygame.sprite.Group()
+help_grop = pygame.sprite.Group()
 bullet_group = pygame.sprite.Group()
 horizontal_border = pygame.sprite.Group()
 vertical_border = pygame.sprite.Group()
@@ -28,24 +31,19 @@ metior_image = load_image("metior.png")
 metior_23_image = load_image("mid_met-tran.png")
 shooting_sound = pygame.mixer.Sound("shoot.wav")
 explo_sound = pygame.mixer.Sound("invaderkilled.wav")
+shooting_sound.set_volume(0.01)
+explo_sound.set_volume(0.01)
 #game_over_sound = pygame.mixer.Sound("explosion.wav")
 FONT1 = pygame.font.Font("Quick Brown.ttf", 18)
 bul_im = load_image("bul.png")
+help_im = load_image("help.png")
 GRAVITY = 0.1
 scor = 0
-with open("schor", "r") as f:
-    best_scor = int(f.read())
-
 met_images = []
 met_images.append(metior_23_image)
 met_images.append(metior_image)
-
-'''met_list = [
-    "metior.png",
-    "mid_met.png"
-]
-for im in met_list:
-    met_images.append(pygame.image.load(path.join(direct, im)).convert())'''
+with open("schor", "r") as f:
+    best_scor = int(f.read())
 
 
 def terminate():
@@ -56,7 +54,7 @@ def terminate():
 def start_screen():
     #menu_sound = pygame.mixer.music.load("что-нибудь скачать")
     #pygame.mixer.music.play(-1)
-    global best_scor, player_group, bullet_group, horizontal_border, all_sprites, vertical_border, enemy
+    global best_scor, help_grop, player_group, bullet_group, horizontal_border, all_sprites, vertical_border, enemy
     with open("schor", "r") as f:
         best_scor = int(f.read())
     intro_text = ["Space defender", "", "", "",
@@ -67,6 +65,7 @@ def start_screen():
     screen.blit(fon, (0, 0))
     font = pygame.font.Font(None, 30)
     text_coord = 100
+    pygame.sprite.Group()
     player_group = pygame.sprite.Group()
     all_sprites = pygame.sprite.Group()
     bullet_group = pygame.sprite.Group()
@@ -222,6 +221,26 @@ class Metior(pygame.sprite.Sprite):
             self.kill()
 
 
+class Buff(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        super(Buff, self).__init__(all_sprites)
+        self.add(help_grop)
+        self.image = pygame.transform.scale(help_im, (25, 25))
+        self.rect = self.image.get_rect()
+        self.rect.center = (x, y)
+        shooting_sound.play()
+
+    def update(self):
+        global scor, buff_flag
+        self.rect.y += 3
+        if self.rect.top < 0:
+            self.kill()
+        if pygame.sprite.spritecollide(self, player_group, False):
+            self.kill()
+            buff_flag = True
+            scor += 2
+
+
 class Bulet(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super(Bulet, self).__init__(all_sprites)
@@ -240,6 +259,8 @@ class Bulet(pygame.sprite.Sprite):
             self.kill()
             explo_sound.play()
             create_particles((self.rect.x, self.rect.y))
+            if random.randrange(1, 10) == 1:
+                Buff(self.rect.x, self.rect.y)
             scor += lvl / 5
 
 
