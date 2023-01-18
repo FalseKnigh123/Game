@@ -27,19 +27,20 @@ bullet_group = pygame.sprite.Group()
 horizontal_border = pygame.sprite.Group()
 vertical_border = pygame.sprite.Group()
 ship_image = load_image("Ship (1).png")
+fon_dif = load_image("fon_dif.jpg")
 metior_image = load_image("metior.png")
 metior_23_image = load_image("mid_met-tran.png")
 shooting_sound = pygame.mixer.Sound("shoot.wav")
 explo_sound = pygame.mixer.Sound("invaderkilled.wav")
 shooting_sound.set_volume(0.01)
 explo_sound.set_volume(0.01)
-#game_over_sound = pygame.mixer.Sound("explosion.wav")
+game_over_sound = pygame.mixer.Sound("main_sound.mp3")
 FONT1 = pygame.font.Font("Quick Brown.ttf", 18)
 bul_im = load_image("bul.png")
 help_im = load_image("help.png")
 GRAVITY = 0.1
 scor = 0
-met_images = []
+met_images = list()
 met_images.append(metior_23_image)
 met_images.append(metior_image)
 with open("schor", "r") as f:
@@ -52,14 +53,14 @@ def terminate():
 
 
 def start_screen():
-    #menu_sound = pygame.mixer.music.load("что-нибудь скачать")
-    #pygame.mixer.music.play(-1)
+    game_over_sound.play(-1)
+    game_over_sound.set_volume(0.1)
     global best_scor, help_grop, player_group, bullet_group, horizontal_border, all_sprites, vertical_border, enemy
     with open("schor", "r") as f:
         best_scor = int(f.read())
     intro_text = ["Space defender", "", "", "",
                   f" Лучший результат: {best_scor}", "", "",
-                  "Назмите конпку 'spase' чтобы начать игры",]
+                  "Назмите конпку 'spase' чтобы начать игры", ]
     global width, height
     fon = pygame.transform.scale(load_image('start.jpg'), (width, height))
     screen.blit(fon, (0, 0))
@@ -93,10 +94,10 @@ def start_screen():
 def dificult_screen():
     intro_text = ["Выберете сложность", "Нажмите на клавиатуре цифру обозночающую сложность",
                   "1.Легко Мало метеоритов", "2. Средняя сложность Метеоритов больше",
-                  "3.Сложно  Метеоритов еще больше колличестов","хп увеличивается с размером",
-                  "4.impossible Метеоритов огромной колличесто,","даже у самых мальньких метеоритов 2 хп"]
+                  "3.Сложно  Метеоритов еще больше колличестов", "хп увеличивается с размером",
+                  "4.impossible Метеоритов огромной колличесто,", "даже у самых мальньких метеоритов 2 хп"]
     global width, height, lvl, fon_flag
-    fon = pygame.transform.scale(load_image('start.jpg'), (width, height))
+    fon = pygame.transform.scale(fon_dif, (width, height))
     screen.blit(fon, (0, 0))
     font = pygame.font.Font(None, 30)
     text_coord = 100
@@ -135,11 +136,12 @@ def dificult_screen():
 
 
 def final_screen():
+    game_over_sound.stop()
     global width, height, running, scor
     intro_text = ["Defead", "", "", "",
                   f"Результат: {scor}", "", "",
-                  "Нажмите на кнопу SPASE чтобы вернуктся ",""
-                  "на стартовый экран"]
+                  "Нажмите на кнопу SPASE чтобы вернуктся ", ""
+                                                             "на стартовый экран"]
     fon = pygame.transform.scale(load_image('final_fon.png'), (width, height))
     screen.blit(fon, (0, 0))
     font = pygame.font.Font(None, 30)
