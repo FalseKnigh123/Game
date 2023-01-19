@@ -5,7 +5,7 @@ import random
 
 
 def load_image(name):
-    fullname = os.path.join(name)
+    fullname = os.path.join('data/image', name)
     if not os.path.isfile(fullname):
         print(f'Файл с изображением {fullname} не найден')
         sys.exit()
@@ -27,15 +27,15 @@ bullet_group = pygame.sprite.Group()
 horizontal_border = pygame.sprite.Group()
 vertical_border = pygame.sprite.Group()
 ship_image = load_image("Ship (1).png")
-fon_dif = load_image("fon_dif.jpg")
+fon_dif = load_image("start.jpg")
 metior_image = load_image("metior.png")
 metior_23_image = load_image("mid_met-tran.png")
-shooting_sound = pygame.mixer.Sound("shoot.wav")
-explo_sound = pygame.mixer.Sound("invaderkilled.wav")
+shooting_sound = pygame.mixer.Sound("data/sound/shoot.wav")
+explo_sound = pygame.mixer.Sound("data/sound/invaderkilled.wav")
 shooting_sound.set_volume(0.01)
 explo_sound.set_volume(0.01)
-game_over_sound = pygame.mixer.Sound("main_sound.mp3")
-FONT1 = pygame.font.Font("Quick Brown.ttf", 18)
+game_over_sound = pygame.mixer.Sound("data/sound/main_sound.mp3")
+#game_over_sound = pygame.mixer.Sound("explosion.wav")
 bul_im = load_image("bul.png")
 help_im = load_image("help.png")
 GRAVITY = 0.1
