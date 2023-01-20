@@ -36,7 +36,7 @@ class AnimatedSprite(pygame.sprite.Sprite):
         self.image = self.frames[self.cur_frame]
 
 
-dragon = AnimatedSprite(load_image("131.jpg"), 8, 1, 250, 250)
+dragon = AnimatedSprite(load_image("131-trans.png"), 8, 1, 250, 250)
 
 if __name__ == '__main__':
     pygame.init()
