@@ -77,6 +77,8 @@ def start_screen():
         clock.tick(fps)
 
 
+
+
 class Particle(pygame.sprite.Sprite):
     fire = [load_image('metior.png')]
     for scale in (5, 10, 15, 20):
