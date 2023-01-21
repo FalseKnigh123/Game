@@ -13,7 +13,6 @@ def load_image(name):
     return image
 
 
-buff_flag = False
 pygame.mixer.init()
 pygame.font.init()
 lvl = 0
