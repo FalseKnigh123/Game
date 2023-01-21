@@ -16,12 +16,12 @@ def load_image(name):
 buff_flag = False
 pygame.mixer.init()
 pygame.font.init()
-VEL = 5
 lvl = 0
 fon_flag = 0
 enemy = pygame.sprite.Group()
 player_group = pygame.sprite.Group()
 all_sprites = pygame.sprite.Group()
+an_sprites = pygame.sprite.Group()
 help_grop = pygame.sprite.Group()
 bullet_group = pygame.sprite.Group()
 horizontal_border = pygame.sprite.Group()
@@ -50,6 +50,29 @@ with open("schor", "r") as f:
 def terminate():
     pygame.quit()
     sys.exit()
+
+
+class AnimatedSprite(pygame.sprite.Sprite):
+    def __init__(self, sheet, columns, rows, x, y):
+        super().__init__(an_sprites)
+        self.frames = list()
+        self.cut_sheet(sheet, columns, rows)
+        self.cur_frame = 0
+        self.image = self.frames[self.cur_frame]
+        self.rect = self.rect.move(x, y)
+
+    def cut_sheet(self, sheet, columns, rows):
+        self.rect = pygame.Rect(0, 0, sheet.get_width() // columns,
+                                sheet.get_height() // rows)
+        for j in range(rows):
+            for i in range(columns):
+                frame_location = (self.rect.w * i, self.rect.h * j)
+                self.frames.append(sheet.subsurface(pygame.Rect(
+                    frame_location, self.rect.size)))
+
+    def update(self):
+        self.cur_frame = (self.cur_frame + 1) % len(self.frames)
+        self.image = self.frames[self.cur_frame]
 
 
 def start_screen():
@@ -175,15 +198,17 @@ def dificult_screen():
 
 def final_screen():
     game_over_sound.stop()
-    global width, height, running, scor
+    global width, height, running, scor, an_sprites
+    an_sprites = pygame.sprite.Group()
     intro_text = ["Defead", "", "", "",
                   f"Результат: {scor}", "", "",
-                  "Нажмите нaа кнопу SPASE чтобы вернуктся ", ""
-                                                             "на стартовый экран"]
+                  "Нажмите нaа кнопу SPASE чтобы вернуктся ", "",
+                                                              "на стартовый экран"]
     fon = pygame.transform.scale(load_image('final_fon.png'), (width, height))
     screen.blit(fon, (0, 0))
     font = pygame.font.Font(None, 30)
     text_coord = 100
+    animacion = AnimatedSprite(load_image("131-trans.png"), 8, 1, 400, 400)
     for line in intro_text:
         string_rendered = font.render(line, True, (255, 239, 213))
         intro_rect = string_rendered.get_rect()
@@ -208,6 +233,20 @@ def final_screen():
                         f.write(str(scor))
                 scor = 0
                 return
+        fon = pygame.transform.scale(load_image('final_fon.png'), (width, height))
+        screen.blit(fon, (0, 0))
+        font = pygame.font.Font(None, 30)
+        text_coord = 100
+        for line in intro_text:
+            string_rendered = font.render(line, True, (255, 239, 213))
+            intro_rect = string_rendered.get_rect()
+            text_coord += 10
+            intro_rect.top = text_coord
+            intro_rect.x = 10
+            text_coord += intro_rect.height
+            screen.blit(string_rendered, intro_rect)
+        an_sprites.draw(screen)
+        an_sprites.update()
         pygame.display.flip()
         clock.tick(fps)
 
@@ -463,12 +502,16 @@ if __name__ == '__main__':
                 Metior(random.randrange(50, 80), random.randrange(0, 550), 20)
             if fon_flag == 1:
                 fon = pygame.transform.scale(load_image('Batl_fon.png'), (width, height))
+                VEL = 10
             if fon_flag == 2:
                 fon = pygame.transform.scale(load_image('batl_fon2.png'), (width, height))
+                VEL = 10
             if fon_flag == 3:
                 fon = pygame.transform.scale(load_image('batl_fon3.png'), (width, height))
+                VEL = 5
             if fon_flag == 4:
                 fon = pygame.transform.scale(load_image('batl_fon4.png'), (width, height))
+                VEL = 5
             screen.blit(fon, (0, 0))
             font = pygame.font.Font(None, 30)
             text_coord = 10
